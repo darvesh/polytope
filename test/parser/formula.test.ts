@@ -82,4 +82,14 @@ describe("Formula Parser", () => {
 			index: 3,
 		});
 	});
+	it("should parse with column name", () => {
+		expect(formulaParser.run("{amount}")).toMatchObject({
+			result: {
+				type: "column",
+				value: "amount",
+			},
+			isError: false,
+			index: 8,
+		});
+	});
 });

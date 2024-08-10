@@ -1,4 +1,11 @@
-import { possibly, sequenceOf, type Parser } from "arcsecond";
+import {
+	between,
+	many,
+	possibly,
+	sequenceOf,
+	whitespace,
+	type Parser,
+} from "arcsecond";
 
 export const orEmptyString = (parser: Parser<string, string, string>) =>
 	possibly(parser).map((x: any) => (x ? x : ""));
@@ -11,3 +18,6 @@ export function isStringType(value: any): value is string {
 export function isNumberType(value: any): value is number {
 	return typeof value === "number" && !Number.isNaN(value);
 }
+export const whitespaceSurrounded = between(possibly(many(whitespace)))(
+	possibly(whitespace)
+);

@@ -1,5 +1,6 @@
 import { choice, recursiveParser } from "arcsecond";
 import { booleanParser, type BooleanType } from "./boolean";
+import { columnParser, type ColumnType } from "./column";
 import { functionCallParser, type FunctionType } from "./function";
 import { identifierParser, type IdentifierType } from "./identifier";
 import { naParser } from "./na";
@@ -13,7 +14,8 @@ export type FormulaType =
 	| NumberType
 	| StringType
 	| FunctionType
-	| IdentifierType;
+	| IdentifierType
+	| ColumnType;
 
 export const formulaParser = choice([
 	nullParser,
@@ -21,6 +23,7 @@ export const formulaParser = choice([
 	booleanParser,
 	numberParser,
 	stringParser,
+	columnParser,
 	recursiveParser(() => functionCallParser),
 	identifierParser,
 ]);

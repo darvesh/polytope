@@ -56,7 +56,9 @@ describe("Function Parser", () => {
 		});
 	});
 	it("parses function with different mixed type arguments", () => {
-		expect(functionCallParser.run(`FOO(1, "hello", TRUE)`)).toMatchObject({
+		expect(
+			functionCallParser.run(`FOO(1, "hello", TRUE, {date})`)
+		).toMatchObject({
 			isError: false,
 			result: {
 				type: "function",
@@ -76,6 +78,10 @@ describe("Function Parser", () => {
 							type: "boolean",
 							value: true,
 						},
+						{
+							type: "column",
+							value: "date",
+						},
 					],
 				},
 			},
@@ -93,6 +99,64 @@ describe("Function Parser", () => {
 						{
 							type: "identifier",
 							value: "HUNDRED",
+						},
+					],
+				},
+			},
+		});
+	});
+	it("parses function with another function as argument", () => {
+		expect(functionCallParser.run(`FOO(BAR(1))`)).toMatchObject({
+			isError: false,
+			result: {
+				type: "function",
+				name: "FOO",
+				value: {
+					type: "arguments",
+					value: [
+						{
+							type: "function",
+							name: "BAR",
+							value: {
+								type: "arguments",
+								value: [
+									{
+										type: "number",
+										value: 1,
+									},
+								],
+							},
+						},
+					],
+				},
+			},
+		});
+	});
+	it("parses function with another function and column as arguments", () => {
+		expect(functionCallParser.run(`FOO(BAR(1), {date})`)).toMatchObject({
+			isError: false,
+			result: {
+				type: "function",
+				name: "FOO",
+				value: {
+					type: "arguments",
+					value: [
+						{
+							type: "function",
+							name: "BAR",
+							value: {
+								type: "arguments",
+								value: [
+									{
+										type: "number",
+										value: 1,
+									},
+								],
+							},
+						},
+						{
+							type: "column",
+							value: "date",
 						},
 					],
 				},

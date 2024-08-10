@@ -1,23 +1,12 @@
-import {
-	between,
-	char,
-	many,
-	possibly,
-	recursiveParser,
-	sepBy,
-	whitespace,
-	type Parser,
-} from "arcsecond";
+import { between, char, recursiveParser, sepBy, type Parser } from "arcsecond";
 import { formulaParser, type FormulaType } from ".";
+import { whitespaceSurrounded } from "./util";
 export type ArgumentType = {
 	type: "arguments";
 	value: FormulaType;
 	toString: () => string;
 };
 
-const whitespaceSurrounded = between(possibly(many(whitespace)))(
-	possibly(whitespace)
-);
 const betweenBrackets = between(whitespaceSurrounded(char("(")))(
 	whitespaceSurrounded(char(")"))
 );
