@@ -1,12 +1,19 @@
 import { describe, it, expect } from "bun:test";
 import { stringParser } from "../src/string";
 
-describe("string", () => {
+describe("String Parser", () => {
 	it("should parse string", () => {
 		const res = stringParser.run(`"hello, world"`);
 		expect(res).toMatchObject({
 			isError: false,
 			result: { type: "string", value: "hello, world" },
+		});
+	});
+	it("should parse string with spaces in between", () => {
+		const res = stringParser.run(`"hello,         world"`);
+		expect(res).toMatchObject({
+			isError: false,
+			result: { type: "string", value: "hello,         world" },
 		});
 	});
 	it("should parse string with escape", () => {

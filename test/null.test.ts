@@ -1,7 +1,7 @@
 import { nullParser } from "../src/null";
 import { describe, it, expect } from "bun:test";
 
-describe.only("nullParser", () => {
+describe("Null Parser", () => {
 	it("parses NULL", () => {
 		expect(nullParser.run("NULL")).toMatchObject({
 			result: {

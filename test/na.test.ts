@@ -1,7 +1,7 @@
 import { naParser } from "../src/na";
 import { describe, it, expect } from "bun:test";
 
-describe.only("NAParser", () => {
+describe("NA Parser", () => {
 	it("parses #N/A", () => {
 		expect(naParser.run("#N/A")).toMatchObject({
 			result: {

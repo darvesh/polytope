@@ -1,12 +1,12 @@
 import { booleanParser } from "../src/boolean";
 import { describe, it, expect } from "bun:test";
 
-describe("booleanParser", () => {
+describe("Boolean Parser", () => {
 	it("parses TRUE", () => {
 		expect(booleanParser.run("TRUE")).toMatchObject({
 			result: {
 				type: "boolean",
-				value: "TRUE",
+				value: true,
 			},
 			isError: false,
 			index: 4,
@@ -17,7 +17,7 @@ describe("booleanParser", () => {
 		expect(booleanParser.run("FALSE")).toMatchObject({
 			result: {
 				type: "boolean",
-				value: "FALSE",
+				value: false,
 			},
 			isError: false,
 			index: 5,

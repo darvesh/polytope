@@ -2,7 +2,7 @@ import { describe, it, expect } from "bun:test";
 
 import { numberParser } from "../src/number";
 
-describe("number", () => {
+describe("Number Parser", () => {
 	it("should parse positive integer", () => {
 		const res = numberParser.run("1234");
 		expect(res).toMatchObject({
