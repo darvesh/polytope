@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { identifierParser } from "../src/identifier";
+import { identifierParser } from "../../src/parser/identifier";
 
 describe("Identifier Parser", () => {
 	it("should parse identifier with only letters", () => {

@@ -1,4 +1,4 @@
-import { booleanParser } from "../src/boolean";
+import { booleanParser } from "../../src/parser/boolean";
 import { describe, it, expect } from "bun:test";
 
 describe("Boolean Parser", () => {

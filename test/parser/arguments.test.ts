@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { argumentsParser } from "../src/arguments";
+import { argumentsParser } from "../../src/parser/arguments";
 
 describe("Arguments Parser", () => {
 	it("should parse arguments with integer", () => {

@@ -1,4 +1,4 @@
-import { functionCallParser } from "../src/function";
+import { functionCallParser } from "../../src/parser/function";
 import { describe, it, expect } from "bun:test";
 
 describe("Function Parser", () => {

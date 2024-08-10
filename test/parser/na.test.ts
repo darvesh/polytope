@@ -1,4 +1,4 @@
-import { naParser } from "../src/na";
+import { naParser } from "../../src/parser/na";
 import { describe, it, expect } from "bun:test";
 
 describe("NA Parser", () => {

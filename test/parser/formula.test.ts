@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { formulaParser } from "../src";
+import { formulaParser } from "../../src/parser";
 
 describe("Formula Parser", () => {
 	it("should parse integer", () => {

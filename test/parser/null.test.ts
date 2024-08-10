@@ -1,4 +1,4 @@
-import { nullParser } from "../src/null";
+import { nullParser } from "../../src/parser/null";
 import { describe, it, expect } from "bun:test";
 
 describe("Null Parser", () => {

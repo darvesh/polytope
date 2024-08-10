@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { stringParser } from "../src/string";
+import { stringParser } from "../../src/parser/string";
 
 describe("String Parser", () => {
 	it("should parse string", () => {

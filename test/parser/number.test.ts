@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
 
-import { numberParser } from "../src/number";
+import { numberParser } from "../../src/parser/number";
 
 describe("Number Parser", () => {
 	it("should parse positive integer", () => {
