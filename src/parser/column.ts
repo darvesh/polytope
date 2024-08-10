@@ -14,7 +14,6 @@ const betweenCurlyBraces = between(whitespaceSurrounded(char("{")))(
 export const columnParser: Parser<ColumnType> = betweenCurlyBraces(
 	whitespaceSurrounded(identifierParser.map((value) => value.value))
 ).map((value) => {
-	console.log("columnParser", value);
 	if (!isStringType(value)) {
 		throw new Error(`Expected string as column name, but got ${value}`);
 	}
