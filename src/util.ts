@@ -21,3 +21,10 @@ export const makeMultiType =
 		value: values,
 		toString: () => `${typeName}(${values})`,
 	});
+
+export function isStringType(value: any): value is string {
+	return typeof value === "string";
+}
+export function isNumberType(value: any): value is number {
+	return typeof value === "number" && !Number.isNaN(value);
+}

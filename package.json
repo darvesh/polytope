@@ -1,12 +1,12 @@
 {
-  "devDependencies": {
-    "typescript": "^5.5.2",
-    "@types/bun": "latest"
-  },
-  "dependencies": {
-    "arcsecond": "^5.0.0"
-  },
-  "name": "formula",
-  "module": "index.ts",
-  "type": "module"
+	"devDependencies": {
+		"@types/bun": "latest",
+		"typescript": "^5.5.4"
+	},
+	"dependencies": {
+		"arcsecond": "^5.0.0"
+	},
+	"name": "polytope",
+	"module": "index.ts",
+	"type": "module"
 }

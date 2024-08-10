@@ -1,9 +1,15 @@
-import { str } from "arcsecond";
+import { str, type Parser } from "arcsecond";
 
-const nullType = () => ({
-	type: "Null",
-	value: null,
-	toString: () => "Null",
+export type NullType = {
+	type: "Null";
+	value: null;
+	toString: () => string;
+};
+
+export const nullParser: Parser<NullType> = str("NULL").map((value) => {
+	return {
+		type: "Null",
+		value: null,
+		toString: () => "null",
+	};
 });
-
-export const nullParser = str("NULL").map(nullType);

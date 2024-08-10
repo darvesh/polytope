@@ -1,8 +1,26 @@
-import { choice, str } from "arcsecond";
-import { makeBasicType } from "./util";
+import { choice, str, type Parser } from "arcsecond";
 
-const booleanType = makeBasicType("boolean");
-
-export const booleanParser = choice([str("TRUE"), str("FALSE")]).map((x) =>
-	x === "TRUE" ? booleanType(true) : booleanType(false)
-);
+export type BooleanType = {
+	type: "boolean";
+	value: boolean;
+	toString: () => string;
+};
+export const booleanParser: Parser<BooleanType> = choice([
+	str("TRUE"),
+	str("FALSE"),
+]).map((value) => {
+	if (value === "TRUE") {
+		return {
+			type: "boolean",
+			value: true,
+			toString: () => `boolean(${value})`,
+		};
+	} else if (value === "FALSE") {
+		return {
+			type: "boolean",
+			value: false,
+			toString: () => `boolean(${value})`,
+		};
+	}
+	throw new Error(`Expected TRUE/FALSE, but got ${value}`);
+});

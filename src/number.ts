@@ -1,9 +1,20 @@
-import { choice, char, digits, regex, anyOfString } from "arcsecond";
-import { joinedSequence, makeBasicType, orEmptyString } from "./util";
+import {
+	anyOfString,
+	char,
+	choice,
+	digits,
+	regex,
+	type Parser,
+} from "arcsecond";
+import { isNumberType, joinedSequence, orEmptyString } from "./util";
 
-const numberType = makeBasicType("number");
+export type NumberType = {
+	type: "number";
+	value: number;
+	toString: () => string;
+};
 
-export const numberParser = joinedSequence([
+export const numberParser: Parser<NumberType> = joinedSequence([
 	orEmptyString(char("-")),
 	choice([char("0"), regex(/^[1-9][0-9]*/)]),
 	orEmptyString(joinedSequence([char("."), digits])),
@@ -14,4 +25,14 @@ export const numberParser = joinedSequence([
 			digits,
 		])
 	),
-]).map((x) => numberType(Number(x)));
+]).map((value) => {
+	const num = Number(value);
+	if (!isNumberType(num)) {
+		throw new Error(`Expected a number, but got ${value}`);
+	}
+	return {
+		type: "number",
+		value: num,
+		toString: () => `number(${num})`,
+	};
+});

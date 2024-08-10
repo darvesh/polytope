@@ -1,4 +1,4 @@
-import { joinedSequence, makeBasicType } from "./util";
+import { isStringType, joinedSequence, makeBasicType } from "./util";
 
 import {
 	anythingExcept,
@@ -9,7 +9,11 @@ import {
 	type Parser,
 } from "arcsecond";
 
-const stringType = makeBasicType("string");
+export type StringType = {
+	type: "string";
+	value: string;
+	toString: () => string;
+};
 
 const joinedMany = (parser: Parser<string | number, string, any>) =>
 	many(parser).map((x) =>
@@ -18,11 +22,20 @@ const joinedMany = (parser: Parser<string | number, string, any>) =>
 
 const betweenQuotes = between(char('"'))(char('"'));
 
-export const stringParser = betweenQuotes(
+export const stringParser: Parser<StringType> = betweenQuotes(
 	joinedMany(
 		choice([
 			joinedSequence([char("\\"), char('"')]).map(() => '"'),
 			anythingExcept(char('"')),
 		])
 	)
-).map(stringType);
+).map((value) => {
+	if (!isStringType(value)) {
+		throw new Error(`Expected a string, but got ${value}`);
+	}
+	return {
+		type: "string",
+		value,
+		toString: () => `string(${value})`,
+	};
+});

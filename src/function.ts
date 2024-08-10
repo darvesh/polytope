@@ -1,57 +1,19 @@
-import {
-	anyChar,
-	between,
-	char,
-	choice,
-	many,
-	possibly,
-	recursiveParser,
-	regex,
-	sepBy,
-	sequenceOf,
-	whitespace,
-	type Parser,
-} from "arcsecond";
-import { makeBasicType, makeMultiType } from "./util";
-import { nullParser } from "./null";
-import { booleanParser } from "./boolean";
-import { numberParser } from "./number";
-import { stringParser } from "./string";
-import { naParser } from "./na";
+import { recursiveParser, sequenceOf, type Parser } from "arcsecond";
+import { argumentsParser, type ArgumentType } from "./arguments";
+import { identifierParser } from "./identifier";
 
-const argType = makeMultiType("arguments");
-const whitespaceSurrounded = between(possibly(many(whitespace)))(
-	possibly(whitespace)
-);
-const betweenBrackets = between(whitespaceSurrounded(char("(")))(
-	whitespaceSurrounded(char(")"))
-);
-const commaSeparated = sepBy(whitespaceSurrounded(char(",")));
+export type FunctionType = {
+	type: "function";
+	name: string;
+	value: ArgumentType;
+	toString: () => string;
+};
 
-const valueParser = choice([
-	nullParser,
-	naParser,
-	booleanParser,
-	numberParser,
-	stringParser,
-	recursiveParser(() => functionCallParser),
-]);
-
-const argParser = betweenBrackets(commaSeparated(valueParser)).map(argType);
-
-const identifierType = makeBasicType("identifier");
-const identifier = regex(/^[a-zA-Z_][a-zA-Z0-9_]*/).map((x) =>
-	identifierType(x)
-);
-
-export const functionCallParser = sequenceOf([identifier, argParser]).map(
-	([name, args]) => ({
-		type: "function_call",
-		name: name.value,
-		arguments: args,
-	})
-);
-
-const k = valueParser.run("#N/A");
-
-console.dir(k, { depth: null });
+export const functionCallParser: Parser<FunctionType> = sequenceOf([
+	identifierParser,
+	recursiveParser(() => argumentsParser),
+]).map(([name, args]) => ({
+	type: "function",
+	name: name.value,
+	value: args,
+}));
