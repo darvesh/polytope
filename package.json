@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "typescript": "^5.5.2",
+    "@types/bun": "latest"
+  },
+  "dependencies": {
+    "arcsecond": "^5.0.0"
+  },
+  "name": "formula",
+  "module": "index.ts",
+  "type": "module"
+}
