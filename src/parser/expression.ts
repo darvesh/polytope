@@ -33,10 +33,6 @@ const createBinary = (
 
 type Expression = FormulaType | BinaryExpression;
 
-function parentheses(parser: Parser<Expression>) {
-	return between(char("("))(char(")"))(parser);
-}
-
 function operatorParser(operator: string, parser: Parser<Expression>) {
 	return sepBy1<unknown, Expression>(whitespaceSurrounded(char(operator)))(
 		parser
@@ -50,7 +46,9 @@ function operatorParser(operator: string, parser: Parser<Expression>) {
 
 const topLevelParser: Parser<Expression | FormulaType> = choice([
 	formulaParser,
-	parentheses(recursiveParser(() => expressionParser)) as Parser<Expression>,
+	between(char("("))(char(")"))(
+		recursiveParser(() => expressionParser)
+	) as Parser<Expression>,
 ]);
 
 const exponentParser: Parser<Expression> = operatorParser("^", topLevelParser);
