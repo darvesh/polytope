@@ -1,8 +1,10 @@
 import {
 	between,
+	endOfInput,
 	many,
 	possibly,
 	sequenceOf,
+	takeLeft,
 	whitespace,
 	type Parser,
 } from "arcsecond";
@@ -21,3 +23,6 @@ export function isNumberType(value: any): value is number {
 export const whitespaceSurrounded = between(possibly(many(whitespace)))(
 	possibly(whitespace)
 );
+
+export const ends = <P extends Parser<unknown>>(parser: P): P =>
+	takeLeft(parser)(endOfInput) as P;
