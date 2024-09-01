@@ -33,7 +33,9 @@ const createBinary = (
 
 type Expression = FormulaType | BinaryExpression;
 
-const parentheses = between(char("("))(char(")"));
+function parentheses(parser: Parser<Expression>): Parser<Expression> {
+	return between(char("("))(parser)(char(")")) as Parser<Expression>;
+}
 
 const exponentParser: Parser<Expression> = sepBy(
 	whitespaceSurrounded(char("^"))
@@ -41,15 +43,6 @@ const exponentParser: Parser<Expression> = sepBy(
 	return values.reduce((acc, curr, index) => {
 		if (index === 0) return acc;
 		return createBinary("^", acc as Expression, curr as Expression);
-	}, values[0]) as Expression;
-});
-
-const multiplicationParser: Parser<Expression> = sepBy(
-	sequenceOf([optionalWhitespace, char("*"), optionalWhitespace])
-)(exponentParser).map((values) => {
-	return values.reduce((acc, curr, index) => {
-		if (index === 0) return acc;
-		return createBinary("*", acc as Expression, curr as Expression);
 	}, values[0]) as Expression;
 });
 
@@ -62,6 +55,15 @@ const divisionParser: Parser<Expression> = sepBy(
 	}, values[0]) as Expression;
 });
 
+const multiplicationParser: Parser<Expression> = sepBy(
+	sequenceOf([optionalWhitespace, char("*"), optionalWhitespace])
+)(divisionParser).map((values) => {
+	return values.reduce((acc, curr, index) => {
+		if (index === 0) return acc;
+		return createBinary("*", acc as Expression, curr as Expression);
+	}, values[0]) as Expression;
+});
+
 const additionParser: Parser<Expression> = sepBy(
 	sequenceOf([optionalWhitespace, char("+"), optionalWhitespace])
 )(multiplicationParser).map((values) => {
@@ -71,10 +73,20 @@ const additionParser: Parser<Expression> = sepBy(
 	}, values[0]) as Expression;
 });
 
+const subtractionParser: Parser<Expression> = sepBy(
+	sequenceOf([optionalWhitespace, char("-"), optionalWhitespace])
+)(additionParser).map((values) => {
+	return values.reduce((acc, curr, index) => {
+		if (index === 0) return acc;
+		return createBinary("-", acc as Expression, curr as Expression);
+	}, values[0]) as Expression;
+});
+
 const expressionParser: Parser<Expression> = choice([
+	recursiveParser(() => ends(subtractionParser)),
 	recursiveParser(() => ends(additionParser)),
-	recursiveParser(() => ends(divisionParser)),
 	recursiveParser(() => ends(multiplicationParser)),
+	recursiveParser(() => ends(divisionParser)),
 	recursiveParser(() => ends(exponentParser)),
 	recursiveParser(() => expressionParser),
 ]);
@@ -85,7 +97,9 @@ export const mathExpressionParser: Parser<Expression> = sequenceOf([
 	optionalWhitespace,
 ]).map(([, expression]) => expression);
 
-const exp = "(100+2)*10+MAX(TEN,2,3)^4";
+const exp = "100*10/4-89";
+
+
 const res = mathExpressionParser.run(exp);
 console.log(exp);
 console.dir(res, { depth: null });
