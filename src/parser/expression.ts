@@ -10,7 +10,6 @@ import {
 } from "arcsecond";
 import { formulaParser, type FormulaType } from ".";
 import { ends, whitespaceSurrounded } from "./util";
-import { numberParser } from "./number";
 
 type BinaryOperator = "+" | "-" | "*" | "/" | "^";
 
@@ -77,7 +76,7 @@ const expressionParser: Parser<Expression> = choice([
 	recursiveParser(() => ends(divisionParser)),
 	recursiveParser(() => ends(multiplicationParser)),
 	recursiveParser(() => ends(exponentParser)),
-	ends(numberParser),
+	recursiveParser(() => expressionParser),
 ]);
 
 export const mathExpressionParser: Parser<Expression> = sequenceOf([
