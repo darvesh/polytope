@@ -37,74 +37,31 @@ function parentheses(parser: Parser<Expression>) {
 	return between<string, string, Expression>(char("("))(parser)(char(")"));
 }
 
-const exponentParser: Parser<Expression> = sepBy<
-	unknown,
-	Expression,
-	unknown,
-	unknown
->(whitespaceSurrounded(char("^")))(formulaParser).map((values) => {
-	return values.reduce((acc, curr, index) => {
-		if (index === 0) return acc;
-		return createBinary("^", acc, curr);
-	}, values[0]);
-});
+function operatorParser(operator: string, parser: Parser<Expression>) {
+	return sepBy<unknown, Expression, unknown, unknown>(
+		whitespaceSurrounded(char(operator))
+	)(parser).map((values) => {
+		return values.reduce((acc, curr, index) => {
+			if (index === 0) return acc;
+			return createBinary(operator as BinaryOperator, acc, curr);
+		}, values[0]);
+	});
+}
 
-const divisionParser: Parser<Expression> = sepBy<
-	unknown,
-	Expression,
-	unknown,
-	unknown
->(sequenceOf([optionalWhitespace, char("/"), optionalWhitespace]))(
+const exponentParser: Parser<Expression> = operatorParser("^", formulaParser);
+const multiplicationParser: Parser<Expression> = operatorParser(
+	"*",
 	exponentParser
-).map((values) => {
-	return values.reduce((acc, curr, index) => {
-		if (index === 0) return acc;
-		return createBinary("/", acc, curr);
-	}, values[0]);
-});
-
-const multiplicationParser: Parser<Expression> = sepBy<
-	unknown,
-	Expression,
-	unknown,
-	unknown
->(sequenceOf([optionalWhitespace, char("*"), optionalWhitespace]))(
-	divisionParser
-).map((values) => {
-	return values.reduce((acc, curr, index) => {
-		if (index === 0) return acc;
-		return createBinary("*", acc, curr);
-	}, values[0]);
-});
-
-const additionParser: Parser<Expression> = sepBy<
-	unknown,
-	Expression,
-	unknown,
-	unknown
->(sequenceOf([optionalWhitespace, char("+"), optionalWhitespace]))(
+);
+const divisionParser: Parser<Expression> = operatorParser(
+	"/",
 	multiplicationParser
-).map((values) => {
-	return values.reduce((acc, curr, index) => {
-		if (index === 0) return acc;
-		return createBinary("+", acc, curr);
-	}, values[0]);
-});
-
-const subtractionParser: Parser<Expression> = sepBy<
-	unknown,
-	Expression,
-	unknown,
-	unknown
->(sequenceOf([optionalWhitespace, char("-"), optionalWhitespace]))(
+);
+const additionParser: Parser<Expression> = operatorParser("+", divisionParser);
+const subtractionParser: Parser<Expression> = operatorParser(
+	"-",
 	additionParser
-).map((values) => {
-	return values.reduce((acc, curr, index) => {
-		if (index === 0) return acc;
-		return createBinary("-", acc, curr);
-	}, values[0]);
-});
-
+);
 const expressionParser: Parser<Expression> = choice([
 	recursiveParser(() => ends(subtractionParser)),
 	recursiveParser(() => ends(additionParser)),
