@@ -1,4 +1,4 @@
-import { isStringType, joinedSequence, makeBasicType } from "./util";
+import { isStringType, joinedSequence } from "./util";
 
 import {
 	anythingExcept,
