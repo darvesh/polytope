@@ -4,12 +4,12 @@ import {
 	choice,
 	optionalWhitespace,
 	recursiveParser,
-	sepBy,
+	sepBy1,
 	sequenceOf,
 	type Parser,
 } from "arcsecond";
 import { formulaParser, type FormulaType } from ".";
-import { ends, whitespaceSurrounded } from "./util";
+import { whitespaceSurrounded } from "./util";
 
 type BinaryOperator = "+" | "-" | "*" | "/" | "^";
 
@@ -34,13 +34,13 @@ const createBinary = (
 type Expression = FormulaType | BinaryExpression;
 
 function parentheses(parser: Parser<Expression>) {
-	return between<string, string, Expression>(char("("))(parser)(char(")"));
+	return between(char("("))(char(")"))(parser);
 }
 
 function operatorParser(operator: string, parser: Parser<Expression>) {
-	return sepBy<unknown, Expression, unknown, unknown>(
-		whitespaceSurrounded(char(operator))
-	)(parser).map((values) => {
+	return sepBy1<unknown, Expression>(whitespaceSurrounded(char(operator)))(
+		parser
+	).map((values) => {
 		return values.reduce((acc, curr, index) => {
 			if (index === 0) return acc;
 			return createBinary(operator as BinaryOperator, acc, curr);
@@ -48,7 +48,12 @@ function operatorParser(operator: string, parser: Parser<Expression>) {
 	});
 }
 
-const exponentParser: Parser<Expression> = operatorParser("^", formulaParser);
+const topLevelParser: Parser<Expression | FormulaType> = choice([
+	formulaParser,
+	parentheses(recursiveParser(() => expressionParser)) as Parser<Expression>,
+]);
+
+const exponentParser: Parser<Expression> = operatorParser("^", topLevelParser);
 const multiplicationParser: Parser<Expression> = operatorParser(
 	"*",
 	exponentParser
@@ -62,12 +67,13 @@ const subtractionParser: Parser<Expression> = operatorParser(
 	"-",
 	additionParser
 );
+
 const expressionParser: Parser<Expression> = choice([
-	recursiveParser(() => ends(subtractionParser)),
-	recursiveParser(() => ends(additionParser)),
-	recursiveParser(() => ends(multiplicationParser)),
-	recursiveParser(() => ends(divisionParser)),
-	recursiveParser(() => ends(exponentParser)),
+	recursiveParser(() => subtractionParser),
+	recursiveParser(() => additionParser),
+	recursiveParser(() => multiplicationParser),
+	recursiveParser(() => divisionParser),
+	recursiveParser(() => exponentParser),
 	recursiveParser(() => expressionParser),
 ]);
 
@@ -76,10 +82,3 @@ export const mathExpressionParser: Parser<Expression> = sequenceOf([
 	expressionParser,
 	optionalWhitespace,
 ]).map(([, expression]) => expression);
-
-const exp = "100*10/4-89";
-
-
-const res = mathExpressionParser.run(exp);
-console.log(exp);
-console.dir(res, { depth: null });
